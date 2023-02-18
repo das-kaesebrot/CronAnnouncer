@@ -3,15 +3,23 @@ package eu.kaesebrot.dev;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.logging.Logger;
+
 public class CronAnnouncerPlugin extends JavaPlugin {
-    FileConfiguration config = getConfig();
+    FileConfiguration config;
+    Logger logger;
+
+    public CronAnnouncerPlugin() {
+        config = getConfig();
+        logger = getLogger();
+    }
 
     @Override
     public void onEnable() {
-        getLogger().info(getName() + " has been enabled!");
+        this.saveDefaultConfig();
     }
     @Override
     public void onDisable() {
-        getLogger().info(getName() + " has been disabled!");
+        logger.info(getName() + " has been disabled!");
     }
 }
