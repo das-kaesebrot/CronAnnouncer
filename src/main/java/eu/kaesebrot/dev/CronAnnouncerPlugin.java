@@ -37,7 +37,8 @@ public class CronAnnouncerPlugin extends JavaPlugin {
 
     private void queueInitialScheduler() {
         if (scheduledMessages.isEmpty()) {
-            getLogger().info("Skip adding queuer, no scheduled messages given");
+            getLogger().info("Skipping adding the initial scheduler, no scheduled messages given");
+            return;
         }
 
         var queueAheadDuration = Duration.of(1, ChronoUnit.HOURS);

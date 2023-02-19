@@ -32,6 +32,9 @@ public class ScheduleConfigParser
     {
         Map<String, ScheduledMessage> parsedMessages = new HashMap<>();
 
+        // do nothing if root is empty
+        if (!this.plugin.getConfig().contains(KEY_ROOT)) return parsedMessages;
+
         var subKeys = this.plugin.getConfig().getConfigurationSection(KEY_ROOT).getValues(false);
 
         for (Map.Entry<String, Object> entry : subKeys.entrySet()) {
