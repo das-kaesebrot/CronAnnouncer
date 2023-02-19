@@ -32,12 +32,18 @@ public class CronAnnouncerPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         cancelAllTasks();
-        logger.info(getName() + " has been disabled!");
+        getLogger().info(getName() + " has been disabled!");
     }
 
     private void queueInitialScheduler() {
+        if (scheduledMessages.isEmpty()) {
+            getLogger().info("Skip adding queuer, no scheduled messages given");
+        }
+
         var queueAheadDuration = Duration.of(1, ChronoUnit.HOURS);
         var queuer = new ScheduledMessageTaskQueuer(this, scheduledMessages, queueAheadDuration);
+
+        getLogger().info("Queueing initial scheduler");
 
         subtaskScheduler = queuer.runTaskTimer(this, 0L, tickConverter.durationToTicks(queueAheadDuration));
     }
