@@ -34,7 +34,7 @@ public class ScheduledMessageTaskQueuer extends BukkitRunnable
             var message = scheduledMessage.getValue();
             var messageText = message.getText();
 
-            plugin.getLogger().info(String.format("Scheduling messages for '%s' for duration %s", scheduledMessage.getKey(), durationAhead.toString()));
+            plugin.getLogger().info(String.format("Scheduling messages for %s=%s for duration %s", scheduledMessage.getKey(), scheduledMessage.getValue().toString(), durationAhead.toString()));
             var nextRunTicksForMessage = tickConverter.getNextRunTicksForNextDurationFromNow(scheduledMessage.getValue().getSchedule(), durationAhead);
 
             // guess if we can use a simple repeatable timer
@@ -59,8 +59,8 @@ public class ScheduledMessageTaskQueuer extends BukkitRunnable
 
                 activeSubTasks.add(subTask);
 
-                plugin.getLogger().info(String.format("Scheduled repeatable message '%s' (%s) running %s times every %s ticks, first run %s ticks from now",
-                        scheduledMessage.getKey(), message.getType(), nextRunTicksForMessage.size(), ticksRepeatableInterval.get(), nextRunTicksForMessage.get(0)));
+                plugin.getLogger().info(String.format("Scheduled repeatable message %s=%s running %s times every %s ticks, first run %s ticks from now",
+                        scheduledMessage.getKey(), message, nextRunTicksForMessage.size(), ticksRepeatableInterval.get(), nextRunTicksForMessage.get(0)));
             }
             else
             {
@@ -82,8 +82,8 @@ public class ScheduledMessageTaskQueuer extends BukkitRunnable
                     var nextRunDateTime = tickConverter.ticksToDateTimeFromNow(nextRunTick);
                     activeSubTasks.add(subTask);
 
-                    plugin.getLogger().info(String.format("Scheduled single-run message '%s' (%s) at %s (%s ticks from now)",
-                            scheduledMessage.getKey(), message.getType(), nextRunDateTime.toString(), nextRunTick));
+                    plugin.getLogger().info(String.format("Scheduled single-run message %s=%s at %s (%s ticks from now)",
+                            scheduledMessage.getKey(), message.toString(), nextRunDateTime.toString(), nextRunTick));
                 }
             }
         }
