@@ -9,8 +9,7 @@ name: Java CI with Gradle
 
 on:
   push:
-    tags:
-    - '*'
+    branches: [ "main" ]
 
 permissions:
   contents: read
@@ -27,14 +26,10 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Build with Gradle
+      - name: Setup Gradle
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-        with:
-          arguments: build
       - name: Generate jar with Gradle
-        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-        with:
-          arguments: shadowJar
+        run: ./gradlew shadowJar
       - name: Upload generated artifacts
         uses: actions/upload-artifact@v3
         with:
