@@ -1,0 +1,4 @@
+#schedules:
+#  my-test-message:
+#    message: "Test message text"
+#    schedule: "*/5 * * * *"
