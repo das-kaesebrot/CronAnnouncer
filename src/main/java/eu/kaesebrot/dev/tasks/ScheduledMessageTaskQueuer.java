@@ -4,6 +4,7 @@ import eu.kaesebrot.dev.classes.ScheduledMessage;
 import eu.kaesebrot.dev.utils.TickConverter;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public class ScheduledMessageTaskQueuer extends BukkitRunnable
     private final JavaPlugin plugin;
     private Map<String, ScheduledMessage> scheduledMessages;
     private Duration durationAhead;
-    private List<Integer> activeSubTasks = new ArrayList<>();
+    private List<BukkitTask> activeSubTasks = new ArrayList<>();
     private TickConverter tickConverter = new TickConverter();
 
     public ScheduledMessageTaskQueuer(JavaPlugin plugin, Map<String, ScheduledMessage> scheduledMessages, Duration durationAhead) {
@@ -38,18 +39,35 @@ public class ScheduledMessageTaskQueuer extends BukkitRunnable
 
             for (long nextRunTick: nextRunTicksForMessage)
             {
-                var subTaskId = plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new BroadcastTask(plugin, messageText), nextRunTick);
+                BukkitRunnable runnable;
+
+                switch (message.getType()) {
+                    case TITLE:
+                        runnable = new TitleTask(plugin, messageText);
+                        break;
+                    case BROADCAST:
+                        runnable = new BroadcastTask(plugin, messageText);
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Illegal message type provided");
+                }
+
+                var subTask = runnable.runTaskLater(plugin, nextRunTick);
+
                 var nextRunDateTime = tickConverter.ticksToDateTimeFromNow(nextRunTick);
-                activeSubTasks.add(subTaskId);
+                activeSubTasks.add(subTask);
+
                 plugin.getLogger().info(String.format("Scheduled message '%s' at %s (%s ticks from now)", scheduledMessage.getKey(), nextRunDateTime.toString(), nextRunTick));
             }
         }
     }
 
     private void cleanUpRunningSubTasks() {
-        for (int taskId: activeSubTasks)
+        for (BukkitTask task: activeSubTasks)
         {
-            plugin.getServer().getScheduler().cancelTask(taskId);
+            if (!task.isCancelled()) {
+                task.cancel();
+            }
         }
     }
 }
