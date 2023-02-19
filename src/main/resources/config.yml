@@ -1,4 +1,4 @@
 #schedules:
 #  my-test-message:
-#    message: "Test message text"
+#    message: "&5My colorful message text running every 5 minutes"
 #    schedule: "*/5 * * * *"
