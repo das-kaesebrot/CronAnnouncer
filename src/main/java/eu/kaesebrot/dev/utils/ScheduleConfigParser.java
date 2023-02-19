@@ -45,6 +45,6 @@ public class ScheduleConfigParser
 
         var parsedCronValue = parser.parse(scheduleEntry.get(KEY_SCHEDULE));
 
-        return new ScheduledMessage(parsedCronValue, scheduleEntry.get(KEY_MESSAGE));
+        return new ScheduledMessage(parsedCronValue, scheduleEntry.get(KEY_MESSAGE).replaceAll("(&([a-f0-9]))", "\u00A7$2"));
     }
 }
