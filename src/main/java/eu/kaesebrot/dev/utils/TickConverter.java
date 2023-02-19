@@ -8,18 +8,31 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class TickConverter
 {
     private static int ticksPerSecond = 20;
 
-    public long getTicksUntilDaysFromNow(int offsetDays)
-    {
-        if (offsetDays <= 0) {
-            throw new IllegalArgumentException("Offset has to be greater than 0");
+    public Optional<Long> ticksRepeatableInterval(List<Long> tickList) {
+        long ticklistSize = tickList.size();
+
+        if (ticklistSize <= 1) {
+            return Optional.empty();
         }
 
-        return (long) offsetDays * 86400 * ticksPerSecond;
+        long offsetStart = tickList.get(0);
+        long ticksBetween = tickList.get(1) - tickList.get(0);
+
+        for (int index = 0; index < ticklistSize; index++) {
+            var estimatedTicks = offsetStart + (ticksBetween * index);
+
+            if (estimatedTicks != tickList.get(index)) {
+                return Optional.empty();
+            }
+        }
+
+        return Optional.of(ticksBetween);
     }
 
     public ZonedDateTime ticksToDateTimeFromNow(long ticks)

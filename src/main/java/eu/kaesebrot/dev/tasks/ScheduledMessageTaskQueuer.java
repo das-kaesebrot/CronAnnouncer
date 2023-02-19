@@ -37,27 +37,54 @@ public class ScheduledMessageTaskQueuer extends BukkitRunnable
             plugin.getLogger().info(String.format("Scheduling messages for '%s' for duration %s", scheduledMessage.getKey(), durationAhead.toString()));
             var nextRunTicksForMessage = tickConverter.getNextRunTicksForNextDurationFromNow(scheduledMessage.getValue().getSchedule(), durationAhead);
 
-            for (long nextRunTick: nextRunTicksForMessage)
-            {
-                BukkitRunnable runnable;
+            // guess if we can use a simple repeatable timer
+            // if present, we can, otherwise we have to queue single tasks for every iteration
+            var ticksRepeatableInterval = tickConverter.ticksRepeatableInterval(nextRunTicksForMessage);
 
+            BukkitRunnable runnable;
+
+            if (ticksRepeatableInterval.isPresent()) {
                 switch (message.getType()) {
                     case TITLE:
-                        runnable = new TitleTask(plugin, messageText);
+                        runnable = new TitleTask(plugin, messageText, nextRunTicksForMessage.size());
                         break;
                     case BROADCAST:
-                        runnable = new BroadcastTask(plugin, messageText);
+                        runnable = new BroadcastTask(plugin, messageText, nextRunTicksForMessage.size());
                         break;
                     default:
                         throw new IllegalArgumentException("Illegal message type provided");
                 }
 
-                var subTask = runnable.runTaskLater(plugin, nextRunTick);
+                var subTask = runnable.runTaskTimer(plugin, nextRunTicksForMessage.get(0), ticksRepeatableInterval.get());
 
-                var nextRunDateTime = tickConverter.ticksToDateTimeFromNow(nextRunTick);
                 activeSubTasks.add(subTask);
 
-                plugin.getLogger().info(String.format("Scheduled message '%s' at %s (%s ticks from now)", scheduledMessage.getKey(), nextRunDateTime.toString(), nextRunTick));
+                plugin.getLogger().info(String.format("Scheduled repeatable message '%s' (%s) running %s times every %s ticks, first run %s ticks from now",
+                        scheduledMessage.getKey(), message.getType(), nextRunTicksForMessage.size(), ticksRepeatableInterval.get(), nextRunTicksForMessage.get(0)));
+            }
+            else
+            {
+                for (long nextRunTick: nextRunTicksForMessage)
+                {
+                    switch (message.getType()) {
+                        case TITLE:
+                            runnable = new TitleTask(plugin, messageText);
+                            break;
+                        case BROADCAST:
+                            runnable = new BroadcastTask(plugin, messageText);
+                            break;
+                        default:
+                            throw new IllegalArgumentException("Illegal message type provided");
+                    }
+
+                    var subTask = runnable.runTaskLater(plugin, nextRunTick);
+
+                    var nextRunDateTime = tickConverter.ticksToDateTimeFromNow(nextRunTick);
+                    activeSubTasks.add(subTask);
+
+                    plugin.getLogger().info(String.format("Scheduled single-run message '%s' (%s) at %s (%s ticks from now)",
+                            scheduledMessage.getKey(), message.getType(), nextRunDateTime.toString(), nextRunTick));
+                }
             }
         }
     }
