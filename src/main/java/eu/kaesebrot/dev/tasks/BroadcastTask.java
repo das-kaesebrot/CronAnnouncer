@@ -1,19 +1,21 @@
 package eu.kaesebrot.dev.tasks;
 
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
-public class BroadcastTask extends BukkitRunnable {
-    private final JavaPlugin plugin;
-    private final String message;
+public class BroadcastTask extends CronAnnouncerTask {
 
     public BroadcastTask(JavaPlugin plugin, String message) {
-        this.plugin = plugin;
-        this.message = message;
+        super(plugin, message);
+    }
+
+    public BroadcastTask(JavaPlugin plugin, String message, int runs) {
+        super(plugin, message, runs);
     }
 
     @Override
     public void run() {
         plugin.getServer().broadcastMessage(message);
+
+        decrementCounterAndCancelIfDone();
     }
 }
