@@ -1,0 +1,14 @@
+version: '2'
+
+services:
+  mc-debug:
+    image: itzg/minecraft-server
+    container_name: mc-debug
+    ports:
+      - 25565:25565
+    volumes:
+      - ./mc-debug:/data
+    environment:
+      - EULA=TRUE
+      - ONLINE_MODE=FALSE
+      - TYPE=PAPER
