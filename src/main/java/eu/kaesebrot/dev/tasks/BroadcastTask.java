@@ -14,7 +14,10 @@ public class BroadcastTask extends CronAnnouncerTask {
 
     @Override
     public void run() {
-        plugin.getServer().broadcastMessage(message);
+        for (var player: plugin.getServer().getOnlinePlayers())
+        {
+            player.sendMessage(message);
+        }
 
         decrementCounterAndCancelIfDone();
     }
