@@ -3,6 +3,7 @@ package eu.kaesebrot.dev.utils;
 import com.cronutils.model.definition.CronDefinitionBuilder;
 import com.cronutils.parser.CronParser;
 import eu.kaesebrot.dev.CronAnnouncerPlugin;
+import eu.kaesebrot.dev.classes.MessageType;
 import eu.kaesebrot.dev.classes.ScheduledMessage;
 import org.bukkit.plugin.PluginLogger;
 
@@ -16,6 +17,7 @@ public class ScheduleConfigParser
 {
     private String KEY_MESSAGE = "message";
     private String KEY_SCHEDULE = "schedule";
+    private String KEY_TYPE = "type";
     private PluginLogger logger = new PluginLogger(getPlugin(CronAnnouncerPlugin.class));
     private CronParser parser = new CronParser(CronDefinitionBuilder.instanceDefinitionFor(CRON4J));
 
@@ -45,6 +47,6 @@ public class ScheduleConfigParser
 
         var parsedCronValue = parser.parse(scheduleEntry.get(KEY_SCHEDULE));
 
-        return new ScheduledMessage(parsedCronValue, scheduleEntry.get(KEY_MESSAGE).replaceAll("(&([a-f0-9]))", "\u00A7$2"));
+        return new ScheduledMessage(scheduleEntry.get(KEY_MESSAGE).replaceAll("(&([a-f0-9]))", "\u00A7$2"), parsedCronValue, MessageType.BROADCAST);
     }
 }
