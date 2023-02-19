@@ -38,7 +38,7 @@ public class ScheduledMessageTaskQueuer extends BukkitRunnable
 
             for (long nextRunTick: nextRunTicksForMessage)
             {
-                var subTaskId = plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new OneOffScheduledMessageTask(plugin, messageText), nextRunTick);
+                var subTaskId = plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new BroadcastTask(plugin, messageText), nextRunTick);
                 var nextRunDateTime = tickConverter.ticksToDateTimeFromNow(nextRunTick);
                 activeSubTasks.add(subTaskId);
                 plugin.getLogger().info(String.format("Scheduled message '%s' at %s (%s ticks from now)", scheduledMessage.getKey(), nextRunDateTime.toString(), nextRunTick));
