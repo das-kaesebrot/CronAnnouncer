@@ -27,6 +27,11 @@ public class ScheduledMessage {
         return type;
     }
 
+    @Override
+    public String toString() {
+        return String.format("ScheduledMessage(message='%s', schedule='%s', type='%s')", this.text, this.schedule.asString(), this.type.toString().toLowerCase());
+    }
+
     public Map<String, String> asStringMap() {
         return Map.of(
                 "message", this.text,
