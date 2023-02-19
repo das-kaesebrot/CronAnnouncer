@@ -17,7 +17,7 @@ public class TitleTask extends CronAnnouncerTask {
     @Override
     public void run() {
         for (Player player: plugin.getServer().getOnlinePlayers()) {
-            player.sendTitle(null, message, 10, 70, 20);
+            player.sendTitle(message, null, 10, 70, 20);
         }
 
         decrementCounterAndCancelIfDone();
