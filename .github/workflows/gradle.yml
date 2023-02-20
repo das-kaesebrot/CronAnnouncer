@@ -5,12 +5,15 @@
 # This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
 
-name: Java CI with Gradle
+name: Build and generate JAR
 
 on:
   push:
+    branches: main
     tags:
-      - '*'
+    - '*'
+  pull_request:
+    branches: main
 
 permissions:
   id-token: write
@@ -37,6 +40,16 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+      - name: Build project
+        run: ./gradlew build
+      
+  release:  
+    runs-on: ubuntu-latest
+    if: ${{ github.ref_type }} == "tag"
+
+    steps:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
       - name: Generate jar with Gradle
