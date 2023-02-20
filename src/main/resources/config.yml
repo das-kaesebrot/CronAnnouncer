@@ -1,4 +1,9 @@
 #schedules:
+#  # A name for your message. Only used for display purposes.
 #  my-test-message:
+#    # The content of the message being sent, with color support.
 #    message: "&5My colorful message text running every 5 minutes"
+#    # Cron expression defining the interval the message should be sent in
+#    # See http://www.sauronsoftware.it/projects/cron4j/api/it/sauronsoftware/cron4j/SchedulingPattern.html for valid examples
 #    schedule: "*/5 * * * *"
+#    type: broadcast
