@@ -1,5 +1,7 @@
 # CronAnnouncer
 
+![build](https://github.com/github/docs/actions/workflows/main.yml/badge.svg?branch=main)
+
 ## About
 CronAnnouncer is a Bukkit/Spigot plugin to allow scheduling broadcast/title messages to all users using a cron expression.
 
