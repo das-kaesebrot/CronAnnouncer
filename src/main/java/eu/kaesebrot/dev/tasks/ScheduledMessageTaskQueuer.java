@@ -7,6 +7,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.time.Duration;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -18,11 +19,15 @@ public class ScheduledMessageTaskQueuer extends BukkitRunnable
     private Duration durationAhead;
     private List<BukkitTask> activeSubTasks = new ArrayList<>();
     private TickConverter tickConverter = new TickConverter();
+    private long referenceTicks;
+    private ZonedDateTime referenceDateTime;
 
     public ScheduledMessageTaskQueuer(JavaPlugin plugin, Map<String, ScheduledMessage> scheduledMessages, Duration durationAhead) {
         this.plugin = plugin;
         this.scheduledMessages = scheduledMessages;
         this.durationAhead = durationAhead;
+
+        updateReference();
     }
 
     @Override
@@ -96,5 +101,24 @@ public class ScheduledMessageTaskQueuer extends BukkitRunnable
                 task.cancel();
             }
         }
+    }
+
+    private boolean ticksHaveDrifted() {
+        var haveDrifted = tickConverter.ticksHaveDrifted(
+                referenceTicks, referenceDateTime,
+                getAbsoluteTicks(), ZonedDateTime.now());
+
+        if (haveDrifted) updateReference();
+
+        return haveDrifted;
+    }
+
+    private void updateReference() {
+        referenceTicks = getAbsoluteTicks();
+        referenceDateTime = ZonedDateTime.now();
+    }
+
+    private long getAbsoluteTicks() {
+        return plugin.getServer().getWorlds().get(0).getFullTime();
     }
 }

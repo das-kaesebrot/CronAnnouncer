@@ -40,6 +40,13 @@ public class TickConverter
         return ZonedDateTime.now().plus(Duration.of(ticks / ticksPerSecond, ChronoUnit.SECONDS));
     }
 
+    public boolean ticksHaveDrifted(long firstAbsoluteTicks, ZonedDateTime firstDateTime, long secondAbsoluteTicks, ZonedDateTime secondDateTime) {
+        long expectedDifferenceTicks = durationToTicks(Duration.between(firstDateTime, secondDateTime));
+        long actualDifferenceTicks = secondAbsoluteTicks - firstAbsoluteTicks;
+
+        // check if actual difference ticks are in range of the expected ticks +/- one second to account for inaccuracies
+        return !((actualDifferenceTicks >= expectedDifferenceTicks - ticksPerSecond) && (actualDifferenceTicks <= expectedDifferenceTicks + ticksPerSecond));
+    }
 
     public List<Long> getNextRunTicksForNextDurationFromNow(Cron cronInterval, Duration duration)
     {
@@ -89,6 +96,6 @@ public class TickConverter
     }
 
     public long durationToTicks(Duration duration) {
-        return (long) (duration.getSeconds() * ticksPerSecond);
+        return (long) (duration.toMillis() * ticksPerSecond) / 1000;
     }
 }
