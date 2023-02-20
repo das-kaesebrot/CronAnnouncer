@@ -4,7 +4,7 @@
 CronAnnouncer is a Bukkit/Spigot plugin to allow scheduling broadcast/title messages to all users using a cron expression.
 
 ## Download and Installation
-Download the latest `cron-announcer-x.x.x.xxx.jar` from the [releases](https://github.com/das-kaesebrot/CronAnnouncer/releases/tag/latest) tab, then place the downloaded .jar file in your Bukkit/Spigot/Paper server `plugins` subdirectory and restart the server.
+Download the latest `cron-announcer-x.x.x.xxx.jar` from the [releases](https://github.com/das-kaesebrot/CronAnnouncer/releases) tab, then place the downloaded .jar file in your Bukkit/Spigot/Paper server `plugins` subdirectory and restart the server.
 
 ## Configuration
 Edit the default `config.yml`.
