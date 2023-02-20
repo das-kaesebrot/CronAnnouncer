@@ -1,6 +1,6 @@
 # CronAnnouncer
 
-![build](https://github.com/das-kaesebrot/CronAnnouncer/blob/main/.github/workflows/gradle.yml/badge.svg?branch=main)
+![build](https://github.com/das-kaesebrot/CronAnnouncer/actions/workflows/gradle.yml/badge.svg?branch=main)
 
 ## About
 CronAnnouncer is a Bukkit/Spigot plugin to allow scheduling broadcast/title messages to all users using a cron expression.
