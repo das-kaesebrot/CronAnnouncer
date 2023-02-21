@@ -103,14 +103,14 @@ public class ScheduledMessageTaskQueuer extends BukkitRunnable
         }
     }
 
-    private boolean ticksHaveDrifted() {
-        var haveDrifted = tickConverter.ticksHaveDrifted(
+    private boolean ticksAreSync() {
+        var areSync = tickConverter.ticksAreSync(
                 referenceTicks, referenceDateTime,
                 getAbsoluteTicks(), ZonedDateTime.now());
 
-        if (haveDrifted) updateReference();
+        if (!areSync) updateReference();
 
-        return haveDrifted;
+        return areSync;
     }
 
     private void updateReference() {

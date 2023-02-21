@@ -40,7 +40,7 @@ public class TickConverter
         return ZonedDateTime.now().plus(Duration.of(ticks / ticksPerSecond, ChronoUnit.SECONDS));
     }
 
-    public boolean ticksHaveDrifted(long firstAbsoluteTicks, ZonedDateTime firstDateTime, long secondAbsoluteTicks, ZonedDateTime secondDateTime) {
+    public boolean ticksAreSync(long firstAbsoluteTicks, ZonedDateTime firstDateTime, long secondAbsoluteTicks, ZonedDateTime secondDateTime) {
         long expectedDifferenceTicks = durationToTicks(Duration.between(firstDateTime, secondDateTime));
         long actualDifferenceTicks = secondAbsoluteTicks - firstAbsoluteTicks;
 
