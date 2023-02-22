@@ -14,6 +14,10 @@ public class TickConverter
 {
     private static int ticksPerSecond = 20;
 
+    public static int getTicksPerSecond() {
+        return ticksPerSecond;
+    }
+
     public Optional<Long> ticksRepeatableInterval(List<Long> tickList) {
         long ticklistSize = tickList.size();
 
@@ -50,25 +54,16 @@ public class TickConverter
 
     public List<Long> getNextRunTicksForNextDurationFromNow(Cron cronInterval, Duration duration)
     {
-        return getNextRunTicksUntilDate(cronInterval, ZonedDateTime.now().plus(duration));
+        var now = ZonedDateTime.now();
+        return getNextRunTicksUntil(cronInterval, now, now.plus(duration));
     }
 
-    public List<Long> getNextRunTicksForNextDaysFromNow(Cron cronInterval, int offsetDays)
-    {
-        if (offsetDays <= 0) {
-            throw new IllegalArgumentException("Offset has to be greater than 0");
-        }
-
-        return getNextRunTicksUntilDate(cronInterval, ZonedDateTime.now().plusDays(offsetDays));
-    }
-
-    public List<Long> getNextRunTicksUntilDate(Cron cronInterval, ZonedDateTime searchEndDate)
+    public List<Long> getNextRunTicksUntil(Cron cronInterval, ZonedDateTime searchStartDate, ZonedDateTime searchEndDate)
     {
         List<Long> nextRunTicks = new ArrayList<>();
 
-        ZonedDateTime now = ZonedDateTime.now();
         ExecutionTime executionTime = ExecutionTime.forCron(cronInterval);
-        var nextExecutionDates = executionTime.getExecutionDates(now, searchEndDate);
+        var nextExecutionDates = executionTime.getExecutionDates(searchStartDate, searchEndDate);
 
         if (nextExecutionDates.isEmpty()) {
             throw new IllegalArgumentException("Time to next execution can't be in the past!");
@@ -76,7 +71,7 @@ public class TickConverter
 
         for (var nextExecutionDate: nextExecutionDates)
         {
-            nextRunTicks.add(now.until(nextExecutionDate, ChronoUnit.SECONDS) * ticksPerSecond);
+            nextRunTicks.add(durationToTicks(Duration.between(searchStartDate, nextExecutionDate)));
         }
 
         return nextRunTicks;
