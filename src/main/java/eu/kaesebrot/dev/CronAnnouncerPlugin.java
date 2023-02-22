@@ -1,7 +1,7 @@
 package eu.kaesebrot.dev;
 
 import eu.kaesebrot.dev.classes.ScheduledMessage;
-import eu.kaesebrot.dev.tasks.ScheduledMessageTaskQueuer;
+import eu.kaesebrot.dev.tasks.ScheduledMessageTaskScheduler;
 import eu.kaesebrot.dev.utils.ScheduleConfigParser;
 import eu.kaesebrot.dev.utils.TickConverter;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -42,7 +42,7 @@ public class CronAnnouncerPlugin extends JavaPlugin {
         }
 
         var queueAheadDuration = Duration.of(1, ChronoUnit.HOURS);
-        var queuer = new ScheduledMessageTaskQueuer(this, scheduledMessages, queueAheadDuration);
+        var queuer = new ScheduledMessageTaskScheduler(this, scheduledMessages, queueAheadDuration);
 
         getLogger().info("Queueing initial scheduler");
 
