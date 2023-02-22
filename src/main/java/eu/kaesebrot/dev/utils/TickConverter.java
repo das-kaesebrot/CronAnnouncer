@@ -48,8 +48,11 @@ public class TickConverter
         long expectedDifferenceTicks = durationToTicks(Duration.between(firstDateTime, secondDateTime));
         long actualDifferenceTicks = secondAbsoluteTicks - firstAbsoluteTicks;
 
+        long expectedFloor = expectedDifferenceTicks - ticksPerSecond;
+        long expectedCeiling = expectedDifferenceTicks + ticksPerSecond;
+
         // check if actual difference ticks are in range of the expected ticks +/- one second to account for inaccuracies
-        return !((actualDifferenceTicks >= expectedDifferenceTicks - ticksPerSecond) && (actualDifferenceTicks <= expectedDifferenceTicks + ticksPerSecond));
+        return (actualDifferenceTicks >= expectedFloor && actualDifferenceTicks <= expectedCeiling);
     }
 
     public List<Long> getNextRunTicksForNextDurationFromNow(Cron cronInterval, Duration duration)
