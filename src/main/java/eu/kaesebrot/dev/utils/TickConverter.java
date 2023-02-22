@@ -62,9 +62,7 @@ public class TickConverter
         ExecutionTime executionTime = ExecutionTime.forCron(cronInterval);
         var nextExecutionDates = executionTime.getExecutionDates(searchStartDate, searchEndDate);
 
-        if (nextExecutionDates.isEmpty()) {
-            throw new IllegalArgumentException("Time to next execution can't be in the past!");
-        }
+        if (nextExecutionDates.isEmpty()) return nextRunTicks;
 
         for (var nextExecutionDate: nextExecutionDates)
         {
