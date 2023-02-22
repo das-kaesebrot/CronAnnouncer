@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public class TickConverter
 {
-    private static int ticksPerSecond = 20;
+    private static final int ticksPerSecond = 20;
 
     public static int getTicksPerSecond() {
         return ticksPerSecond;
@@ -91,6 +91,6 @@ public class TickConverter
     }
 
     public long durationToTicks(Duration duration) {
-        return (long) (duration.toMillis() * ticksPerSecond) / 1000;
+        return (duration.toMillis() * ticksPerSecond) / 1000;
     }
 }
