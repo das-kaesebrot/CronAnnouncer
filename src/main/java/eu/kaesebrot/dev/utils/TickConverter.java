@@ -55,12 +55,6 @@ public class TickConverter
         return (actualDifferenceTicks >= expectedFloor && actualDifferenceTicks <= expectedCeiling);
     }
 
-    public List<Long> getNextRunTicksForNextDurationFromNow(Cron cronInterval, Duration duration)
-    {
-        var now = ZonedDateTime.now();
-        return getNextRunTicksUntil(cronInterval, now, now.plus(duration));
-    }
-
     public List<Long> getNextRunTicksUntil(Cron cronInterval, ZonedDateTime searchStartDate, ZonedDateTime searchEndDate)
     {
         List<Long> nextRunTicks = new ArrayList<>();
@@ -78,19 +72,6 @@ public class TickConverter
         }
 
         return nextRunTicks;
-    }
-
-    public long getNextRunTimeTicks(Cron cronInterval)
-    {
-        ZonedDateTime now = ZonedDateTime.now();
-        ExecutionTime executionTime = ExecutionTime.forCron(cronInterval);
-        var timeToNextExecution = executionTime.timeToNextExecution(now);
-
-        if (timeToNextExecution.isEmpty()) {
-            throw new IllegalArgumentException("Time to next execution can't be in the past!");
-        }
-
-        return durationToTicks(timeToNextExecution.get());
     }
 
     public long durationToTicks(Duration duration) {
