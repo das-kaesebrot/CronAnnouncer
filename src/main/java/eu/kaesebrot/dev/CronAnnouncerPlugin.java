@@ -14,7 +14,7 @@ import java.util.Map;
 public class CronAnnouncerPlugin extends JavaPlugin {
     private ScheduleConfigParser scheduleConfigParser;
     private final TickConverter tickConverter = new TickConverter();
-    private BukkitTask subtaskScheduler;
+    private BukkitTask subtaskSchedulerTask;
 
     Map<String, ScheduledMessage> scheduledMessages;
 
@@ -42,11 +42,13 @@ public class CronAnnouncerPlugin extends JavaPlugin {
         }
 
         var queueAheadDuration = Duration.of(1, ChronoUnit.HOURS);
-        var queuer = new ScheduledMessageTaskScheduler(this, scheduledMessages, queueAheadDuration);
+        var subtaskScheduler = new ScheduledMessageTaskScheduler(this, scheduledMessages, queueAheadDuration);
 
         getLogger().info("Queueing initial scheduler");
 
-        subtaskScheduler = queuer.runTaskTimer(this, 0L, tickConverter.durationToTicks(queueAheadDuration));
+        long pollingTicks = tickConverter.durationToTicks(Duration.ofSeconds(5));
+
+        subtaskSchedulerTask = subtaskScheduler.runTaskTimer(this, 0L, pollingTicks);
     }
 
     private void cancelAllTasks() {
