@@ -92,6 +92,7 @@ public class ScheduledMessageTaskScheduler extends BukkitRunnable
         }
 
         lastScheduleAheadUntil = searchDateEnd;
+        updateReference();
     }
 
     private void cleanUpAllRunningSubTasks() {
