@@ -8,6 +8,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +29,7 @@ public class ScheduledMessageTaskScheduler extends BukkitRunnable
         this.plugin = plugin;
         this.scheduledMessages = scheduledMessages;
         this.durationAhead = durationAhead;
-        lastRunTimeStamp = ZonedDateTime.now();
+        lastRunTimeStamp = getUnixStartTimestamp();
 
         updateReference();
     }
@@ -43,12 +45,13 @@ public class ScheduledMessageTaskScheduler extends BukkitRunnable
             cleanUpAllRunningSubTasks();
 
             // reset last scheduling end timeframe to ensure we re-queue all tasks again with the correct timestamps
-            lastRunTimeStamp = now;
+            lastRunTimeStamp = getUnixStartTimestamp();
         }
 
         // use lastScheduleAheadUntil if it's in the future, use now if last schedule was in the past
         // if it's in the past, we're probably in the first ever run
-        var searchDateStart = (Duration.between(now, lastRunTimeStamp.plus(durationAhead)).isNegative() ? now : lastRunTimeStamp.plus(durationAhead));
+        var searchDateStart = (Duration.between(now, lastRunTimeStamp.plus(durationAhead)).isNegative() ?
+                now : lastRunTimeStamp.plus(durationAhead));
         var searchDateEnd = now.plus(durationAhead);
 
         for (var scheduledMessage: scheduledMessages.entrySet()) {
@@ -147,6 +150,10 @@ public class ScheduledMessageTaskScheduler extends BukkitRunnable
             case BROADCAST -> new BroadcastTask(plugin, message.getText());
             default -> throw new IllegalArgumentException("Illegal message type provided");
         };
+    }
+
+    private ZonedDateTime getUnixStartTimestamp() {
+        return ZonedDateTime.ofInstant(Instant.ofEpochSecond(0), ZoneId.systemDefault());
     }
 
     private long getAbsoluteTicks() {
