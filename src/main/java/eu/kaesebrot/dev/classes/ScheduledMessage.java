@@ -1,14 +1,13 @@
 package eu.kaesebrot.dev.classes;
 
 import com.cronutils.model.Cron;
-import eu.kaesebrot.dev.utils.ScheduleConfigParser;
 
 import java.util.Map;
 
 public class ScheduledMessage {
-    private MessageType type;
-    private String text;
-    private Cron schedule;
+    private final MessageType type;
+    private final String text;
+    private final Cron schedule;
 
     public ScheduledMessage(String text, Cron schedule, MessageType type) {
         this.text = text;

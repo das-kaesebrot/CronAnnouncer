@@ -12,7 +12,11 @@ import java.util.Optional;
 
 public class TickConverter
 {
-    private static int ticksPerSecond = 20;
+    private static final int ticksPerSecond = 20;
+
+    public static int getTicksPerSecond() {
+        return ticksPerSecond;
+    }
 
     public Optional<Long> ticksRepeatableInterval(List<Long> tickList) {
         long ticklistSize = tickList.size();
@@ -40,55 +44,35 @@ public class TickConverter
         return ZonedDateTime.now().plus(Duration.of(ticks / ticksPerSecond, ChronoUnit.SECONDS));
     }
 
+    public boolean ticksAreSync(long firstAbsoluteTicks, ZonedDateTime firstDateTime, long secondAbsoluteTicks, ZonedDateTime secondDateTime) {
+        long expectedDifferenceTicks = durationToTicks(Duration.between(firstDateTime, secondDateTime));
+        long actualDifferenceTicks = secondAbsoluteTicks - firstAbsoluteTicks;
 
-    public List<Long> getNextRunTicksForNextDurationFromNow(Cron cronInterval, Duration duration)
-    {
-        return getNextRunTicksUntilDate(cronInterval, ZonedDateTime.now().plus(duration));
+        long expectedFloor = expectedDifferenceTicks - ticksPerSecond;
+        long expectedCeiling = expectedDifferenceTicks + ticksPerSecond;
+
+        // check if actual difference ticks are in range of the expected ticks +/- one second to account for inaccuracies
+        return (actualDifferenceTicks >= expectedFloor && actualDifferenceTicks <= expectedCeiling);
     }
 
-    public List<Long> getNextRunTicksForNextDaysFromNow(Cron cronInterval, int offsetDays)
-    {
-        if (offsetDays <= 0) {
-            throw new IllegalArgumentException("Offset has to be greater than 0");
-        }
-
-        return getNextRunTicksUntilDate(cronInterval, ZonedDateTime.now().plusDays(offsetDays));
-    }
-
-    public List<Long> getNextRunTicksUntilDate(Cron cronInterval, ZonedDateTime searchEndDate)
+    public List<Long> getNextRunTicksUntil(Cron cronInterval, ZonedDateTime searchStartDate, ZonedDateTime searchEndDate)
     {
         List<Long> nextRunTicks = new ArrayList<>();
 
-        ZonedDateTime now = ZonedDateTime.now();
         ExecutionTime executionTime = ExecutionTime.forCron(cronInterval);
-        var nextExecutionDates = executionTime.getExecutionDates(now, searchEndDate);
+        var nextExecutionDates = executionTime.getExecutionDates(searchStartDate, searchEndDate);
 
-        if (nextExecutionDates.isEmpty()) {
-            throw new IllegalArgumentException("Time to next execution can't be in the past!");
-        }
+        if (nextExecutionDates.isEmpty()) return nextRunTicks;
 
         for (var nextExecutionDate: nextExecutionDates)
         {
-            nextRunTicks.add(now.until(nextExecutionDate, ChronoUnit.SECONDS) * ticksPerSecond);
+            nextRunTicks.add(durationToTicks(Duration.between(searchStartDate, nextExecutionDate)));
         }
 
         return nextRunTicks;
     }
 
-    public long getNextRunTimeTicks(Cron cronInterval)
-    {
-        ZonedDateTime now = ZonedDateTime.now();
-        ExecutionTime executionTime = ExecutionTime.forCron(cronInterval);
-        var timeToNextExecution = executionTime.timeToNextExecution(now);
-
-        if (timeToNextExecution.isEmpty()) {
-            throw new IllegalArgumentException("Time to next execution can't be in the past!");
-        }
-
-        return durationToTicks(timeToNextExecution.get());
-    }
-
     public long durationToTicks(Duration duration) {
-        return (long) (duration.getSeconds() * ticksPerSecond);
+        return (duration.toMillis() * ticksPerSecond) / 1000;
     }
 }

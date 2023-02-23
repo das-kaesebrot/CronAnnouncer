@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.cronutils.model.CronType.CRON4J;
-import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 
 public class ScheduleConfigParser
 {
@@ -21,7 +20,7 @@ public class ScheduleConfigParser
     private String KEY_TYPE = "type";
     private final CronParser parser;
 
-    private JavaPlugin plugin;
+    private final JavaPlugin plugin;
 
     public ScheduleConfigParser(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -35,6 +34,7 @@ public class ScheduleConfigParser
         // do nothing if root is empty
         if (!this.plugin.getConfig().contains(KEY_ROOT)) return parsedMessages;
 
+        //noinspection DataFlowIssue
         var subKeys = this.plugin.getConfig().getConfigurationSection(KEY_ROOT).getValues(false);
 
         for (Map.Entry<String, Object> entry : subKeys.entrySet()) {
