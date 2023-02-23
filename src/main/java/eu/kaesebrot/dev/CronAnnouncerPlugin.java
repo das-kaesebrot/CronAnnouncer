@@ -1,5 +1,6 @@
 package eu.kaesebrot.dev;
 
+import eu.kaesebrot.dev.classes.CronAnnouncerConfiguration;
 import eu.kaesebrot.dev.classes.ScheduledMessage;
 import eu.kaesebrot.dev.tasks.ScheduledMessageTaskScheduler;
 import eu.kaesebrot.dev.utils.ScheduleConfigParser;
@@ -15,15 +16,14 @@ public class CronAnnouncerPlugin extends JavaPlugin {
     private ScheduleConfigParser scheduleConfigParser;
     private final TickConverter tickConverter = new TickConverter();
     private BukkitTask subtaskSchedulerTask;
-
-    Map<String, ScheduledMessage> scheduledMessages;
+    private CronAnnouncerConfiguration configuration;
 
     @Override
     public void onEnable() {
         this.saveDefaultConfig();
 
         scheduleConfigParser = new ScheduleConfigParser(this);
-        scheduledMessages = scheduleConfigParser.parseConfig();
+        configuration = scheduleConfigParser.parseConfig();
 
         cancelAllTasks();
         queueInitialScheduler();
@@ -36,17 +36,16 @@ public class CronAnnouncerPlugin extends JavaPlugin {
     }
 
     private void queueInitialScheduler() {
-        if (scheduledMessages.isEmpty()) {
+        if (configuration.getScheduledMessageMap().isEmpty()) {
             getLogger().info("Skipping adding the initial scheduler, no scheduled messages given");
             return;
         }
 
-        var queueAheadDuration = Duration.of(1, ChronoUnit.HOURS);
-        var subtaskScheduler = new ScheduledMessageTaskScheduler(this, scheduledMessages, queueAheadDuration);
+        var subtaskScheduler = new ScheduledMessageTaskScheduler(this, configuration.getScheduledMessageMap(), configuration.getQueueAheadDuration());
 
         getLogger().info("Queueing initial scheduler");
 
-        long pollingTicks = tickConverter.durationToTicks(Duration.ofSeconds(5));
+        long pollingTicks = tickConverter.durationToTicks(configuration.getPollingInterval());
 
         subtaskSchedulerTask = subtaskScheduler.runTaskTimer(this, 0L, pollingTicks);
     }

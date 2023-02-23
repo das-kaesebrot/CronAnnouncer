@@ -2,11 +2,14 @@ package eu.kaesebrot.dev.utils;
 
 import com.cronutils.model.definition.CronDefinitionBuilder;
 import com.cronutils.parser.CronParser;
+import eu.kaesebrot.dev.classes.CronAnnouncerConfiguration;
 import eu.kaesebrot.dev.classes.MessageType;
 import eu.kaesebrot.dev.classes.ScheduledMessage;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +20,9 @@ public class ScheduleConfigParser
     private String KEY_ROOT = "schedules";
     private String KEY_MESSAGE = "message";
     private String KEY_SCHEDULE = "schedule";
+
+    private String KEY_QUEUE_DURATION = "queue_duration";
+    private String KEY_POLLING_INTERVAL = "polling_interval";
     private String KEY_TYPE = "type";
     private final CronParser parser;
 
@@ -27,7 +33,19 @@ public class ScheduleConfigParser
         this.parser = new CronParser(CronDefinitionBuilder.instanceDefinitionFor(CRON4J));
     }
 
-    public Map<String, ScheduledMessage> parseConfig()
+
+    public CronAnnouncerConfiguration parseConfig()
+    {
+        Duration queueAheadDuration = this.plugin.getConfig().contains(KEY_QUEUE_DURATION) ?
+                Duration.parse(this.plugin.getConfig().getString(KEY_QUEUE_DURATION)) : Duration.of(1, ChronoUnit.HOURS);
+
+        Duration pollingInterval = this.plugin.getConfig().contains(KEY_POLLING_INTERVAL) ?
+                Duration.parse(this.plugin.getConfig().getString(KEY_POLLING_INTERVAL)) : Duration.of(10, ChronoUnit.SECONDS);
+
+        return new CronAnnouncerConfiguration(parseMessages(), queueAheadDuration, pollingInterval);
+    }
+
+    private Map<String, ScheduledMessage> parseMessages()
     {
         Map<String, ScheduledMessage> parsedMessages = new HashMap<>();
 
@@ -43,13 +61,13 @@ public class ScheduleConfigParser
                 try {
                     var result = parseEntry((MemorySection) entry.getValue());
                     parsedMessages.put(entry.getKey(), result);
-                    plugin.getLogger().info(String.format("Successfully parsed message '%s' with schedule '%s'", entry.getKey(), result.getSchedule().asString()));
+                    plugin.getLogger().info(String.format("Successfully parsed message %s=%s", entry.getKey(), result));
                 } catch (IllegalArgumentException exception) {
-                    plugin.getLogger().warning(String.format("Unable to parse cron expression for key %s: '%s'", entry.getKey(), entry.getValue()));
+                    plugin.getLogger().warning(String.format("Unable to parse entry for key %s: '%s'", entry.getKey(), entry.getValue()));
                     plugin.getLogger().warning(exception.getMessage());
                 }
             } else {
-                plugin.getLogger().warning(String.format("Entry '%s' not a map, ignoring it. Value: %s", entry.getKey(), entry.getValue().toString()));
+                plugin.getLogger().warning(String.format("Entry '%s' not a MemorySection, ignoring it. Value: %s", entry.getKey(), entry.getValue().toString()));
             }
         }
 
