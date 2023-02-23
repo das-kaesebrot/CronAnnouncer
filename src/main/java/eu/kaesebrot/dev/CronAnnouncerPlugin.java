@@ -43,7 +43,8 @@ public class CronAnnouncerPlugin extends JavaPlugin {
 
         var subtaskScheduler = new ScheduledMessageTaskScheduler(this, configuration.getScheduledMessageMap(), configuration.getQueueAheadDuration());
 
-        getLogger().info("Queueing initial scheduler");
+        getLogger().info(String.format("Queueing initial scheduler with polling interval %s and queue duration %s",
+                configuration.getPollingInterval(), configuration.getQueueAheadDuration()));
 
         long pollingTicks = tickConverter.durationToTicks(configuration.getPollingInterval());
 
