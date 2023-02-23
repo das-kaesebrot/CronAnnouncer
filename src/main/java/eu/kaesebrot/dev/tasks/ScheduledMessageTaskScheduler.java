@@ -21,13 +21,13 @@ public class ScheduledMessageTaskScheduler extends BukkitRunnable
     private final List<ScheduledMessageTask> activeSubTasks = new ArrayList<>();
     private final TickConverter tickConverter = new TickConverter();
     private TickReferencePoint referencePoint;
-    private ZonedDateTime lastScheduleAheadUntil;
+    private ZonedDateTime lastRunTimeStamp;
 
     public ScheduledMessageTaskScheduler(JavaPlugin plugin, Map<String, ScheduledMessage> scheduledMessages, Duration durationAhead) {
         this.plugin = plugin;
         this.scheduledMessages = scheduledMessages;
         this.durationAhead = durationAhead;
-        lastScheduleAheadUntil = ZonedDateTime.now();
+        lastRunTimeStamp = ZonedDateTime.now();
 
         updateReference();
     }
@@ -43,12 +43,12 @@ public class ScheduledMessageTaskScheduler extends BukkitRunnable
             cleanUpAllRunningSubTasks();
 
             // reset last scheduling end timeframe to ensure we re-queue all tasks again with the correct timestamps
-            lastScheduleAheadUntil = now;
+            lastRunTimeStamp = now;
         }
 
         // use lastScheduleAheadUntil if it's in the future, use now if last schedule was in the past
         // if it's in the past, we're probably in the first ever run
-        var searchDateStart = (Duration.between(now, lastScheduleAheadUntil).isNegative() ? now : lastScheduleAheadUntil);
+        var searchDateStart = (Duration.between(now, lastRunTimeStamp.plus(durationAhead)).isNegative() ? now : lastRunTimeStamp.plus(durationAhead));
         var searchDateEnd = now.plus(durationAhead);
 
         for (var scheduledMessage: scheduledMessages.entrySet()) {
@@ -58,7 +58,7 @@ public class ScheduledMessageTaskScheduler extends BukkitRunnable
                     searchDateStart, searchDateEnd);
 
             if (nextRunTicksForMessage.isEmpty())
-                break;
+                continue;
 
             plugin.getLogger().info(String.format("Scheduling new messages for %s=%s in time slot %s to %s",
                     scheduledMessage.getKey(), scheduledMessage.getValue().toString(), searchDateStart, searchDateEnd));
@@ -91,7 +91,7 @@ public class ScheduledMessageTaskScheduler extends BukkitRunnable
             }
         }
 
-        lastScheduleAheadUntil = searchDateEnd;
+        lastRunTimeStamp = now;
         updateReference();
     }
 
