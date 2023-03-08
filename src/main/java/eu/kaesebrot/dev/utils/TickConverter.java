@@ -57,6 +57,7 @@ public class TickConverter
 
     public List<Long> getNextRunTicksUntil(Cron cronInterval, ZonedDateTime searchStartDate, ZonedDateTime searchEndDate)
     {
+        ZonedDateTime now = ZonedDateTime.now();
         List<Long> nextRunTicks = new ArrayList<>();
 
         ExecutionTime executionTime = ExecutionTime.forCron(cronInterval);
@@ -66,7 +67,7 @@ public class TickConverter
 
         for (var nextExecutionDate: nextExecutionDates)
         {
-            nextRunTicks.add(durationToTicks(Duration.between(searchStartDate, nextExecutionDate)));
+            nextRunTicks.add(durationToTicks(Duration.between(now, nextExecutionDate)));
         }
 
         return nextRunTicks;
