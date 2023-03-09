@@ -65,6 +65,7 @@ public class CronAnnouncerCommand implements CommandExecutor {
             case SUBCOMMAND_RELOAD -> {
                 if (args.length == 1 && player.hasPermission(PERMISSION_RELOAD)) {
                     plugin.init();
+                    return true;
                 }
             }
         }
