@@ -86,7 +86,7 @@ public class CronAnnouncerCommand implements CommandExecutor {
                         player.sendMessage(String.format("Successfully removed scheduled message '%s'", messageKey));
                         return true;
                     } else {
-                        player.sendMessage(String.format("Failed removing scheduled message - no message found by id '%s'", messageKey));
+                        player.sendMessage(String.format("Failed removing scheduled message - no message found by key '%s'", messageKey));
                         return false;
                     }
                 }
@@ -94,6 +94,7 @@ public class CronAnnouncerCommand implements CommandExecutor {
             case SUBCOMMAND_RELOAD -> {
                 if (args.length == 1 && player.hasPermission(PERMISSION_RELOAD)) {
                     plugin.init();
+                    player.sendMessage("Reload successful");
                     return true;
                 }
             }
