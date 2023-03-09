@@ -74,6 +74,16 @@ public class ScheduleConfigParser
         return parsedMessages;
     }
 
+    public ScheduledMessage parseFromStrings(String schedule, String messageText, String type) {
+        var parsedCronValue = parser.parse(schedule.replaceAll("^\"|\"$", ""));
+        var parsedText = messageText
+                .replaceAll("(&([a-f0-9]))", "\u00A7$2")
+                .replaceAll("^\"|\"$", "");
+        var parsedType = MessageType.valueOf(type.replaceAll("^\"|\"$", "").toUpperCase());
+
+        return new ScheduledMessage(parsedText, parsedCronValue, parsedType);
+    }
+
     private ScheduledMessage parseEntry(MemorySection scheduleEntry) {
         if (!(
                 scheduleEntry.contains(KEY_MESSAGE)
@@ -83,10 +93,9 @@ public class ScheduleConfigParser
             throw new IllegalArgumentException("Invalid schedule entry");
         }
 
-        var parsedCronValue = parser.parse(scheduleEntry.getString(KEY_SCHEDULE));
-        var parsedText = scheduleEntry.getString(KEY_MESSAGE).replaceAll("(&([a-f0-9]))", "\u00A7$2");
-        var parsedType = MessageType.valueOf(scheduleEntry.getString(KEY_TYPE).toUpperCase());
-
-        return new ScheduledMessage(parsedText, parsedCronValue, parsedType);
+        return parseFromStrings(
+                scheduleEntry.getString(KEY_SCHEDULE),
+                scheduleEntry.getString(KEY_MESSAGE),
+                scheduleEntry.getString(KEY_TYPE));
     }
 }
