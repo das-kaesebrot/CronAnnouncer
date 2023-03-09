@@ -4,9 +4,9 @@ import java.time.Duration;
 import java.util.Map;
 
 public class CronAnnouncerConfiguration {
-    private Map<String, ScheduledMessage> scheduledMessageMap;
-    private Duration queueAheadDuration;
-    private Duration pollingInterval;
+    private final Map<String, ScheduledMessage> scheduledMessageMap;
+    private final Duration queueAheadDuration;
+    private final Duration pollingInterval;
 
     public CronAnnouncerConfiguration(Map<String, ScheduledMessage> scheduledMessageMap, Duration queueAheadDuration, Duration pollingInterval) {
         this.scheduledMessageMap = scheduledMessageMap;

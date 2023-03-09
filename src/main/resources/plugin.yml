@@ -2,3 +2,28 @@ name: CronAnnouncer
 version: 1.0.0
 main: eu.kaesebrot.dev.CronAnnouncerPlugin
 api-version: 1.19
+
+commands:
+  cronannouncer:
+    description: Your description
+    usage: "Usage: /<command> [list | add | rm <message-key> | reload]"
+    permission: eu.kaesebrot.dev.cronannouncer
+    aliases: cron
+
+permissions:
+  eu.kaesebrot.dev.cronannouncer.*:
+    description: Gives access to all CronAnnouncer commands
+    children:
+      eu.kaesebrot.dev.cronannouncer.list: true
+      eu.kaesebrot.dev.cronannouncer.add: true
+      eu.kaesebrot.dev.cronannouncer.remove: true
+      eu.kaesebrot.dev.cronannouncer.reload: true
+
+  eu.kaesebrot.dev.cronannouncer.list:
+    description: Listing of scheduled messages
+  eu.kaesebrot.dev.cronannouncer.add:
+    description: Adding new scheduled messages
+  eu.kaesebrot.dev.cronannouncer.remove:
+    description: Removing scheduled messages
+  eu.kaesebrot.dev.cronannouncer.reload:
+    description: Reload CronAnnouncer config file

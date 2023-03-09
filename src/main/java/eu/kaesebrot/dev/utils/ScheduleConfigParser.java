@@ -17,13 +17,13 @@ import static com.cronutils.model.CronType.CRON4J;
 
 public class ScheduleConfigParser
 {
-    private String KEY_ROOT = "schedules";
-    private String KEY_MESSAGE = "message";
-    private String KEY_SCHEDULE = "schedule";
+    private final String KEY_ROOT = "schedules";
+    private final String KEY_MESSAGE = "message";
+    private final String KEY_SCHEDULE = "schedule";
 
-    private String KEY_QUEUE_DURATION = "queue_duration";
-    private String KEY_POLLING_INTERVAL = "polling_interval";
-    private String KEY_TYPE = "type";
+    private final String KEY_QUEUE_DURATION = "queue_duration";
+    private final String KEY_POLLING_INTERVAL = "polling_interval";
+    private final String KEY_TYPE = "type";
     private final CronParser parser;
 
     private final JavaPlugin plugin;
@@ -74,6 +74,16 @@ public class ScheduleConfigParser
         return parsedMessages;
     }
 
+    public ScheduledMessage parseFromStrings(String schedule, String messageText, String type) {
+        var parsedCronValue = parser.parse(schedule.replaceAll("^\"|\"$", ""));
+        var parsedText = messageText
+                .replaceAll("(&([a-f0-9]))", "\u00A7$2")
+                .replaceAll("^\"|\"$", "");
+        var parsedType = MessageType.valueOf(type.replaceAll("^\"|\"$", "").toUpperCase());
+
+        return new ScheduledMessage(parsedText, parsedCronValue, parsedType);
+    }
+
     private ScheduledMessage parseEntry(MemorySection scheduleEntry) {
         if (!(
                 scheduleEntry.contains(KEY_MESSAGE)
@@ -83,10 +93,9 @@ public class ScheduleConfigParser
             throw new IllegalArgumentException("Invalid schedule entry");
         }
 
-        var parsedCronValue = parser.parse(scheduleEntry.getString(KEY_SCHEDULE));
-        var parsedText = scheduleEntry.getString(KEY_MESSAGE).replaceAll("(&([a-f0-9]))", "\u00A7$2");
-        var parsedType = MessageType.valueOf(scheduleEntry.getString(KEY_TYPE).toUpperCase());
-
-        return new ScheduledMessage(parsedText, parsedCronValue, parsedType);
+        return parseFromStrings(
+                scheduleEntry.getString(KEY_SCHEDULE),
+                scheduleEntry.getString(KEY_MESSAGE),
+                scheduleEntry.getString(KEY_TYPE));
     }
 }
