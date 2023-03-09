@@ -5,6 +5,7 @@ import eu.kaesebrot.dev.commands.CronAnnouncerCommand;
 import eu.kaesebrot.dev.tasks.ScheduledMessageTaskScheduler;
 import eu.kaesebrot.dev.utils.ScheduleConfigParser;
 import eu.kaesebrot.dev.utils.TickConverter;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -18,9 +19,10 @@ public class CronAnnouncerPlugin extends JavaPlugin {
     public void onEnable() {
         this.saveDefaultConfig();
         scheduleConfigParser = new ScheduleConfigParser(this);
+        TabExecutor command = new CronAnnouncerCommand(this);
 
-        // Register our command "kit" (set an instance of your command class as executor)
-        this.getCommand("cronannouncer").setExecutor(new CronAnnouncerCommand(this));
+        this.getCommand("cronannouncer").setExecutor(command);
+        this.getCommand("cronannouncer").setTabCompleter(command);
 
         init(); // innit mate
     }

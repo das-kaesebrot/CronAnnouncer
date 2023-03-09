@@ -2,16 +2,14 @@ package eu.kaesebrot.dev.commands;
 
 import eu.kaesebrot.dev.CronAnnouncerPlugin;
 import eu.kaesebrot.dev.utils.ScheduleConfigParser;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
+import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class CronAnnouncerCommand implements CommandExecutor {
+public class CronAnnouncerCommand implements TabExecutor {
     private final String KEY_ROOT = "schedules"; // keep this key in sync with ScheduleConfigParser!
     private final String SUBCOMMAND_LIST = "list";
     private final String SUBCOMMAND_ADD = "add";
@@ -168,5 +166,42 @@ public class CronAnnouncerCommand implements CommandExecutor {
         plugin.getLogger().info(parsedArgs.toString());
 
         return parsedArgs;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+        List<String> suggestedArgs = new ArrayList<>();
+
+        // don't handle if the args are empty or if the command doesn't come from a player
+        if (!(sender instanceof Player player))
+            return List.of();
+
+        if (args.length == 0) {
+            if (player.hasPermission(PERMISSION_LIST)) suggestedArgs.add(SUBCOMMAND_LIST);
+            if (player.hasPermission(PERMISSION_ADD)) suggestedArgs.add(SUBCOMMAND_ADD);
+            if (player.hasPermission(PERMISSION_REMOVE)) suggestedArgs.add(SUBCOMMAND_REMOVE);
+            if (player.hasPermission(PERMISSION_RELOAD)) suggestedArgs.add(SUBCOMMAND_RELOAD);
+
+            return suggestedArgs;
+
+        } else if (args.length == 1) {
+            switch (args[0]) {
+                case SUBCOMMAND_REMOVE:
+                    if (player.hasPermission(PERMISSION_REMOVE)) {
+                        suggestedArgs.addAll(plugin.getCronAnnouncerConfig().getScheduledMessageMap()
+                                .keySet());
+                        return suggestedArgs;
+                    }
+
+                    // no break intended
+
+                case SUBCOMMAND_LIST:
+                case SUBCOMMAND_RELOAD:
+                case SUBCOMMAND_ADD:
+                    break;
+            }
+        }
+
+        return List.of();
     }
 }
