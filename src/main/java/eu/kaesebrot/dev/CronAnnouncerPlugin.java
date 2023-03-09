@@ -42,6 +42,7 @@ public class CronAnnouncerPlugin extends JavaPlugin {
     }
 
     public void reloadCronAnnouncerConfig() {
+        this.reloadConfig();
         configuration = scheduleConfigParser.parseConfig();
     }
 
