@@ -2,3 +2,17 @@ name: CronAnnouncer
 version: 1.0.0
 main: eu.kaesebrot.dev.CronAnnouncerPlugin
 api-version: 1.19
+
+commands:
+  cronannouncer:
+    description: Your description
+    usage: "Usage: /<command> [list | add | rm | reload]"
+    permission: cronannouncer
+    aliases: cron
+
+permissions:
+  cronannouncer.*:
+  cronannouncer.list:
+  cronannouncer.add:
+  cronannouncer.remove:
+  cronannouncer.reload:

@@ -31,6 +31,10 @@ public class ScheduledMessage {
         return String.format("ScheduledMessage(message='%s', schedule='%s', type='%s')", this.text, this.schedule.asString(), this.type.toString().toLowerCase());
     }
 
+    public String toStringInCommand() {
+        return String.format("message='%s\\u00A7r', schedule='%s', type='%s'", this.text, this.schedule.asString(), this.type.toString().toLowerCase());
+    }
+
     public Map<String, String> asStringMap() {
         return Map.of(
                 "message", this.text,

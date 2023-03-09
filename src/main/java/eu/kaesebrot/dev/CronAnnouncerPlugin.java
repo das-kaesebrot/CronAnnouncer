@@ -1,16 +1,12 @@
 package eu.kaesebrot.dev;
 
 import eu.kaesebrot.dev.classes.CronAnnouncerConfiguration;
-import eu.kaesebrot.dev.classes.ScheduledMessage;
+import eu.kaesebrot.dev.commands.CronAnnouncerCommand;
 import eu.kaesebrot.dev.tasks.ScheduledMessageTaskScheduler;
 import eu.kaesebrot.dev.utils.ScheduleConfigParser;
 import eu.kaesebrot.dev.utils.TickConverter;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
-
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
-import java.util.Map;
 
 public class CronAnnouncerPlugin extends JavaPlugin {
     private ScheduleConfigParser scheduleConfigParser;
@@ -21,18 +17,32 @@ public class CronAnnouncerPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         this.saveDefaultConfig();
-
         scheduleConfigParser = new ScheduleConfigParser(this);
-        configuration = scheduleConfigParser.parseConfig();
 
-        cancelAllTasks();
-        queueInitialScheduler();
+        // Register our command "kit" (set an instance of your command class as executor)
+        this.getCommand("cronannouncer").setExecutor(new CronAnnouncerCommand(this));
+
+        init(); // innit mate
     }
 
     @Override
     public void onDisable() {
         cancelAllTasks();
         getLogger().info(getName() + " has been disabled!");
+    }
+
+    public void init() {
+        reloadCronAnnouncerConfig();
+        cancelAllTasks();
+        queueInitialScheduler();
+    }
+
+    public CronAnnouncerConfiguration getCronAnnouncerConfig() {
+        return this.configuration;
+    }
+
+    public void reloadCronAnnouncerConfig() {
+        configuration = scheduleConfigParser.parseConfig();
     }
 
     private void queueInitialScheduler() {
