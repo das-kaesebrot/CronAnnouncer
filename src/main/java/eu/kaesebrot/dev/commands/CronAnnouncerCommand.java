@@ -1,11 +1,13 @@
 package eu.kaesebrot.dev.commands;
 
 import eu.kaesebrot.dev.CronAnnouncerPlugin;
+import eu.kaesebrot.dev.utils.ScheduleConfigParser;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,10 +46,37 @@ public class CronAnnouncerCommand implements CommandExecutor {
                 }
             }
             case SUBCOMMAND_ADD -> {
-                // TODO
-                if (args.length >= 1 && player.hasPermission(PERMISSION_ADD)) {
-                    player.sendMessage("Not supported yet");
-                    return true;
+                // command: /cronannouncer add name "schedule" "message" type
+                argsList = correctlyParseArgsWithQuotes(argsList);
+
+                if (argsList.size() == 5 && player.hasPermission(PERMISSION_ADD)) {
+                    String key = argsList.get(1).replaceAll("^\"|\"$", "");
+                    String schedule = argsList.get(2);
+                    String message = argsList.get(3);
+                    String type = argsList.get(4);
+
+                    if (plugin.getCronAnnouncerConfig().getScheduledMessageMap().containsKey(key)) {
+                        player.sendMessage(String.format("Key '%s' already exists, please pick another name", key));
+                        return false;
+                    }
+
+                    try {
+                        var newMessage = new ScheduleConfigParser(plugin).parseFromStrings(schedule, message, type);
+
+                        plugin.getLogger().info(String.format("Added new message via command: %s", newMessage.toString()));
+
+                        plugin.getConfig().set(String.format("%s.%s", KEY_ROOT, key), newMessage.asStringMap());
+                        plugin.saveConfig();
+                        plugin.init();
+
+                        player.sendMessage(String.format("Successfully added new message:\n[%s]\n%s\n", key, newMessage.toStringInCommand()));
+
+                        return true;
+
+                    } catch (Exception e) {
+                        player.sendMessage("Error while parsing!\nSyntax: /cronannouncer add <unique-name> \"<cron-expression>\" \"<message-text>\" <type>");
+                        return false;
+                    }
                 }
             }
             case SUBCOMMAND_REMOVE -> {
@@ -102,5 +131,41 @@ public class CronAnnouncerCommand implements CommandExecutor {
         }
 
         return false;
+    }
+
+    private List<String> correctlyParseArgsWithQuotes(List<String> args) {
+
+        List<String> parsedArgs = new ArrayList<>();
+        String argsString = String.join(" ", args).trim() + " "; // add a space to the end to cover the last element
+
+        boolean quoteFound = false;
+        int lastQuoteIndex = 0;
+        int lastSpaceIndex = -1;
+
+        for (int index = 0; index < argsString.length(); index++) {
+            if (argsString.charAt(index) == '\"') {
+                if (quoteFound) {
+                    parsedArgs.add(argsString.substring(lastQuoteIndex + 1, index));
+                } else {
+                    lastQuoteIndex = index;
+                }
+
+                quoteFound = !quoteFound;
+            }
+
+            if (!quoteFound
+                    && argsString.charAt(index) == ' '
+                    && argsString.charAt(index - 1) != '\"') {
+                parsedArgs.add(argsString.substring(lastSpaceIndex + 1, index));
+            }
+
+            if (argsString.charAt(index) == ' ') {
+                lastSpaceIndex = index;
+            }
+        }
+
+        plugin.getLogger().info(parsedArgs.toString());
+
+        return parsedArgs;
     }
 }
