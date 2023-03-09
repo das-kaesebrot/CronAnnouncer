@@ -17,7 +17,7 @@ See http://www.sauronsoftware.it/projects/cron4j/api/it/sauronsoftware/cron4j/Sc
 Example configuration:
 ```yaml
 schedules:
-  # A name for your message. Only used for display purposes.
+  # A unique key for your message. Used to identify messages for in-game commands like /cronannouncer rm <message-key>.
   my-test-message:
     # The content of the message being sent, with color support.
     message: "&5My colorful message text running every 5 minutes"
@@ -44,6 +44,59 @@ schedules:
     schedule: "0 12 * * *"
     type: title
 ```
+## Commands and permissions
+
+Permissions node for all permissions:
+`eu.kaesebrot.dev.cronannouncer.*`
+
+### `/cronannouncer list`
+Lists all scheduled messages.
+
+Arguments: none
+
+Example:
+`/cronannouncer list`
+
+Permissions node:
+`eu.kaesebrot.dev.cronannouncer.list`
+
+### `/cronannouncer add <message-key> <cron-expr> <message-text> <type>`
+Adds a new message to the config file and reloads the plugin. All arguments may be quoted if spaces are needed.
+
+Arguments:
+- message-key: a unique key for the message. Cannont contain spaces.
+- cron-expr: A valid cron pattern, has to be in quotes. See [Configuration](#configuration)
+- message-text: The content of the message. Color codes using & and $ are supported. Has to be in quotes if it contains spaces.
+- type: The type the message should be. Can be either `broadcast` or `title`.
+
+Example:
+`/cronannouncer add my-new-message "*/5 * * * *" "&2My message text being displayed every 5 minutes" broadcast`
+
+Permissions node:
+`eu.kaesebrot.dev.cronannouncer.add`
+
+### `/cronannouncer rm <message-key>`
+Removes the specified message as identified by the message key from the config file and reloads the plugin.
+
+Arguments:
+- message-key: the key of the message to remove (see `config.yml` reference)
+
+Example:
+`/cronannouncer rm my-message-to-be-removed`
+
+Permissions node:
+`eu.kaesebrot.dev.cronannouncer.remove`
+
+### `/cronannouncer reload`
+Reloads the config.yml file from disk and queues all scheduled messages.
+
+Arguments: none
+
+Example:
+`/cronannouncer reload`
+
+Permissions node:
+`eu.kaesebrot.dev.cronannouncer.reload`
 
 ## Open Source License Attribution
 
