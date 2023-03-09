@@ -17,13 +17,13 @@ import static com.cronutils.model.CronType.CRON4J;
 
 public class ScheduleConfigParser
 {
-    private String KEY_ROOT = "schedules";
-    private String KEY_MESSAGE = "message";
-    private String KEY_SCHEDULE = "schedule";
+    private final String KEY_ROOT = "schedules";
+    private final String KEY_MESSAGE = "message";
+    private final String KEY_SCHEDULE = "schedule";
 
-    private String KEY_QUEUE_DURATION = "queue_duration";
-    private String KEY_POLLING_INTERVAL = "polling_interval";
-    private String KEY_TYPE = "type";
+    private final String KEY_QUEUE_DURATION = "queue_duration";
+    private final String KEY_POLLING_INTERVAL = "polling_interval";
+    private final String KEY_TYPE = "type";
     private final CronParser parser;
 
     private final JavaPlugin plugin;
