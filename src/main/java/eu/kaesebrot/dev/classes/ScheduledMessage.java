@@ -12,7 +12,7 @@ public record ScheduledMessage(String text, Cron schedule, MessageType type) {
     }
 
     public String toStringInCommand() {
-        return String.format("message='%s\\u00A7r', schedule='%s', type='%s'", this.text, this.schedule.asString(), this.type.toString().toLowerCase());
+        return String.format("  message='%s&r'\n  schedule='%s'\n  type='%s'", this.text, this.schedule.asString(), this.type.toString().toLowerCase());
     }
 
     public Map<String, String> asStringMap() {

@@ -84,7 +84,7 @@ public class CronAnnouncerCommand implements CommandExecutor {
         returnText.append("Registered messages:\n");
 
         for (var message : messages.entrySet()) {
-            returnText.append(String.format("   [%s] %s\n", message.getKey(), message.getValue().toStringInCommand()));
+            returnText.append(String.format("[%s]\n%s\n", message.getKey(), message.getValue().toStringInCommand()));
         }
 
         return returnText.toString();
