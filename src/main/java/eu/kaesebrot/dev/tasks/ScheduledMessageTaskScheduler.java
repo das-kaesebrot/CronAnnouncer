@@ -57,7 +57,7 @@ public class ScheduledMessageTaskScheduler extends BukkitRunnable
         for (var scheduledMessage: scheduledMessages.entrySet()) {
             var message = scheduledMessage.getValue();
 
-            var nextRunTicksForMessage = tickConverter.getNextRunTicksUntil(scheduledMessage.getValue().getSchedule(),
+            var nextRunTicksForMessage = tickConverter.getNextRunTicksUntil(scheduledMessage.getValue().schedule(),
                     searchDateStart, searchDateEnd);
 
             if (nextRunTicksForMessage.isEmpty())
@@ -145,9 +145,9 @@ public class ScheduledMessageTaskScheduler extends BukkitRunnable
     }
 
     private BukkitRunnable getRunnableForMessage(ScheduledMessage message) {
-        return switch (message.getType()) {
-            case TITLE -> new TitleTask(plugin, message.getText());
-            case BROADCAST -> new BroadcastTask(plugin, message.getText());
+        return switch (message.type()) {
+            case TITLE -> new TitleTask(plugin, message.text());
+            case BROADCAST -> new BroadcastTask(plugin, message.text());
             default -> throw new IllegalArgumentException("Illegal message type provided");
         };
     }

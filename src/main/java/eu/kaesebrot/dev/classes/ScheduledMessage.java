@@ -4,27 +4,7 @@ import com.cronutils.model.Cron;
 
 import java.util.Map;
 
-public class ScheduledMessage {
-    private final MessageType type;
-    private final String text;
-    private final Cron schedule;
-
-    public ScheduledMessage(String text, Cron schedule, MessageType type) {
-        this.text = text;
-        this.schedule = schedule;
-        this.type = type;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public Cron getSchedule() {
-        return schedule;
-    }
-    public MessageType getType() {
-        return type;
-    }
+public record ScheduledMessage(String text, Cron schedule, MessageType type) {
 
     @Override
     public String toString() {
@@ -38,7 +18,7 @@ public class ScheduledMessage {
     public Map<String, String> asStringMap() {
         return Map.of(
                 "message", this.text,
-                "schedule", this.getSchedule().asString(),
+                "schedule", this.schedule().asString(),
                 "type", type.toString().toLowerCase());
     }
 }
