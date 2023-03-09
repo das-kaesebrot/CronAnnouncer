@@ -176,7 +176,7 @@ public class CronAnnouncerCommand implements TabExecutor {
         if (!(sender instanceof Player player))
             return List.of();
 
-        if (args.length == 0) {
+        if (args.length == 1) {
             if (player.hasPermission(PERMISSION_LIST)) suggestedArgs.add(SUBCOMMAND_LIST);
             if (player.hasPermission(PERMISSION_ADD)) suggestedArgs.add(SUBCOMMAND_ADD);
             if (player.hasPermission(PERMISSION_REMOVE)) suggestedArgs.add(SUBCOMMAND_REMOVE);
@@ -184,7 +184,7 @@ public class CronAnnouncerCommand implements TabExecutor {
 
             return suggestedArgs;
 
-        } else if (args.length == 1) {
+        } else if (args.length == 2) {
             switch (args[0]) {
                 case SUBCOMMAND_REMOVE:
                     if (player.hasPermission(PERMISSION_REMOVE)) {
