@@ -17,7 +17,7 @@ public class CronAnnouncerCommand implements CommandExecutor {
     private final String SUBCOMMAND_RELOAD = "reload";
 
     private final String PERMISSION_SEPARATOR = ".";
-    private final String PERMISSION_ROOT = "cronannouncer";
+    private final String PERMISSION_ROOT = "eu.kaesebrot.dev.cronannouncer";
     private final String PERMISSION_LIST = PERMISSION_ROOT + PERMISSION_SEPARATOR + "list";
     private final String PERMISSION_ADD = PERMISSION_ROOT + PERMISSION_SEPARATOR + "add";
     private final String PERMISSION_REMOVE = PERMISSION_ROOT + PERMISSION_SEPARATOR + "remove";
