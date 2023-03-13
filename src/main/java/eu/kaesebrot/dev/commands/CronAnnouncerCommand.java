@@ -1,6 +1,7 @@
 package eu.kaesebrot.dev.commands;
 
 import eu.kaesebrot.dev.CronAnnouncerPlugin;
+import eu.kaesebrot.dev.classes.MessageType;
 import eu.kaesebrot.dev.utils.ScheduleConfigParser;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
@@ -101,6 +102,59 @@ public class CronAnnouncerCommand implements TabExecutor {
         return false;
     }
 
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+        List<String> suggestedArgs = new ArrayList<>();
+
+        // don't handle if the args are empty or if the command doesn't come from a player
+        if (!(sender instanceof Player player))
+            return List.of();
+
+        var parsedArgesWithQuotes = correctlyParseArgsWithQuotes(Arrays.asList(args));
+        plugin.getLogger().info(parsedArgesWithQuotes.toString());
+
+        // /cron
+        if (args.length == 1) {
+            if (player.hasPermission(PERMISSION_LIST)) suggestedArgs.add(SUBCOMMAND_LIST);
+            if (player.hasPermission(PERMISSION_ADD)) suggestedArgs.add(SUBCOMMAND_ADD);
+            if (player.hasPermission(PERMISSION_REMOVE)) suggestedArgs.add(SUBCOMMAND_REMOVE);
+            if (player.hasPermission(PERMISSION_RELOAD)) suggestedArgs.add(SUBCOMMAND_RELOAD);
+
+            return suggestedArgs;
+
+        }
+        // /cron [cmd]
+        else if (args.length == 2)
+        {
+            switch (args[0]) {
+                case SUBCOMMAND_REMOVE:
+                    if (player.hasPermission(PERMISSION_REMOVE)) {
+                        suggestedArgs.addAll(plugin.getCronAnnouncerConfig().getScheduledMessageMap()
+                                .keySet());
+                        return suggestedArgs;
+                    }
+
+                    // no break intended
+
+                case SUBCOMMAND_LIST:
+                case SUBCOMMAND_RELOAD:
+                case SUBCOMMAND_ADD:
+                    break;
+            }
+        }
+        // /cron [cmd] [arg] [arg] [arg]
+        else if (parsedArgesWithQuotes.size() == 4) {
+            // /cron add myname "<cron-expr>" "<message>" <type auto-completion here>
+            if (args[0].equals(SUBCOMMAND_ADD)
+                    && player.hasPermission(PERMISSION_ADD))
+            {
+                return MessageType.getValuesAsLowercase().toList();
+            }
+        }
+
+        return List.of();
+    }
+
     private String listRegisteredMessages()
     {
         var messages = plugin.getCronAnnouncerConfig().getScheduledMessageMap();
@@ -166,42 +220,5 @@ public class CronAnnouncerCommand implements TabExecutor {
         plugin.getLogger().info(parsedArgs.toString());
 
         return parsedArgs;
-    }
-
-    @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        List<String> suggestedArgs = new ArrayList<>();
-
-        // don't handle if the args are empty or if the command doesn't come from a player
-        if (!(sender instanceof Player player))
-            return List.of();
-
-        if (args.length == 1) {
-            if (player.hasPermission(PERMISSION_LIST)) suggestedArgs.add(SUBCOMMAND_LIST);
-            if (player.hasPermission(PERMISSION_ADD)) suggestedArgs.add(SUBCOMMAND_ADD);
-            if (player.hasPermission(PERMISSION_REMOVE)) suggestedArgs.add(SUBCOMMAND_REMOVE);
-            if (player.hasPermission(PERMISSION_RELOAD)) suggestedArgs.add(SUBCOMMAND_RELOAD);
-
-            return suggestedArgs;
-
-        } else if (args.length == 2) {
-            switch (args[0]) {
-                case SUBCOMMAND_REMOVE:
-                    if (player.hasPermission(PERMISSION_REMOVE)) {
-                        suggestedArgs.addAll(plugin.getCronAnnouncerConfig().getScheduledMessageMap()
-                                .keySet());
-                        return suggestedArgs;
-                    }
-
-                    // no break intended
-
-                case SUBCOMMAND_LIST:
-                case SUBCOMMAND_RELOAD:
-                case SUBCOMMAND_ADD:
-                    break;
-            }
-        }
-
-        return List.of();
     }
 }
