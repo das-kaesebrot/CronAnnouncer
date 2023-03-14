@@ -84,10 +84,10 @@ public class CronAnnouncerCommand implements TabExecutor {
                     if (removeScheduledMessage(messageKey)) {
                         player.sendMessage(String.format("Successfully removed scheduled message '%s'", messageKey));
                         return true;
-                    } else {
-                        player.sendMessage(String.format("Failed removing scheduled message - no message found by key '%s'", messageKey));
-                        return false;
                     }
+
+                    player.sendMessage(String.format("Failed removing scheduled message - no message found by key '%s'", messageKey));
+                    return false;
                 }
             }
             case SUBCOMMAND_RELOAD -> {
@@ -111,7 +111,6 @@ public class CronAnnouncerCommand implements TabExecutor {
             return List.of();
 
         var parsedArgesWithQuotes = correctlyParseArgsWithQuotes(Arrays.asList(args));
-        plugin.getLogger().info(parsedArgesWithQuotes.toString());
 
         // /cron
         if (args.length == 1) {
@@ -143,7 +142,7 @@ public class CronAnnouncerCommand implements TabExecutor {
             }
         }
         // /cron [cmd] [arg] [arg] [arg]
-        else if (parsedArgesWithQuotes.size() == 4) {
+        else if (parsedArgesWithQuotes.size() == 5) {
             // /cron add myname "<cron-expr>" "<message>" <type auto-completion here>
             if (args[0].equals(SUBCOMMAND_ADD)
                     && player.hasPermission(PERMISSION_ADD))
@@ -191,6 +190,8 @@ public class CronAnnouncerCommand implements TabExecutor {
         List<String> parsedArgs = new ArrayList<>();
         String argsString = String.join(" ", args).trim() + " "; // add a space to the end to cover the last element
 
+        if (argsString.length() <= 1) return parsedArgs;
+
         boolean quoteFound = false;
         int lastQuoteIndex = 0;
         int lastSpaceIndex = -1;
@@ -217,7 +218,7 @@ public class CronAnnouncerCommand implements TabExecutor {
             }
         }
 
-        plugin.getLogger().info(parsedArgs.toString());
+        // plugin.getLogger().info(parsedArgs.toString());
 
         return parsedArgs;
     }
