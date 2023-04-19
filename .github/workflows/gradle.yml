@@ -33,7 +33,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@749f47bda3e44aa060e82d7b3ef7e40d953bd629
+        uses: gradle/gradle-build-action@6778644d759ada84c71d6abc2f6fd7e328c600ab
       - name: Build project
         run: ./gradlew build
       
@@ -57,7 +57,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@749f47bda3e44aa060e82d7b3ef7e40d953bd629
+        uses: gradle/gradle-build-action@6778644d759ada84c71d6abc2f6fd7e328c600ab
       - name: Generate jar with Gradle
         run: ./gradlew shadowJar
       - name: Upload generated artifacts
