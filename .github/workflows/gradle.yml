@@ -33,7 +33,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@2bf6bc364674627d14824f75cb987b3dee0df05e
+        uses: gradle/gradle-build-action@v2
       - name: Build project
         run: ./gradlew build
       
