@@ -11,7 +11,6 @@ import org.bukkit.scheduler.BukkitTask;
 
 public class CronAnnouncerPlugin extends JavaPlugin {
     private ScheduleConfigParser scheduleConfigParser;
-    private final TickConverter tickConverter = new TickConverter();
     private BukkitTask subtaskSchedulerTask;
     private CronAnnouncerConfiguration configuration;
 
@@ -59,7 +58,7 @@ public class CronAnnouncerPlugin extends JavaPlugin {
         getLogger().info(String.format("Queueing initial scheduler with polling interval %s and queue duration %s",
                 configuration.getPollingInterval(), configuration.getQueueAheadDuration()));
 
-        long pollingTicks = tickConverter.durationToTicks(configuration.getPollingInterval());
+        long pollingTicks = TickConverter.durationToTicks(configuration.getPollingInterval());
 
         subtaskSchedulerTask = subtaskScheduler.runTaskTimer(this, 0L, pollingTicks);
     }

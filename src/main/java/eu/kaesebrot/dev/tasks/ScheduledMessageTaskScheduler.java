@@ -21,7 +21,6 @@ public class ScheduledMessageTaskScheduler extends BukkitRunnable
     private final Map<String, ScheduledMessage> scheduledMessages;
     private final Duration durationAhead;
     private final List<ScheduledMessageTask> activeSubTasks = new ArrayList<>();
-    private final TickConverter tickConverter = new TickConverter();
     private TickReferencePoint referencePoint;
     private ZonedDateTime lastRunTimeStamp;
 
@@ -57,7 +56,7 @@ public class ScheduledMessageTaskScheduler extends BukkitRunnable
         for (var scheduledMessage: scheduledMessages.entrySet()) {
             var message = scheduledMessage.getValue();
 
-            var nextRunTicksForMessage = tickConverter.getNextRunTicksUntil(scheduledMessage.getValue().schedule(),
+            var nextRunTicksForMessage = TickConverter.getNextRunTicksUntil(scheduledMessage.getValue().schedule(),
                     searchDateStart, searchDateEnd);
 
             if (nextRunTicksForMessage.isEmpty())
@@ -68,7 +67,7 @@ public class ScheduledMessageTaskScheduler extends BukkitRunnable
 
             // guess if we can use a simple repeatable timer
             // if present, we can, otherwise we have to queue single tasks for every iteration
-            var ticksRepeatableInterval = tickConverter.ticksRepeatableInterval(nextRunTicksForMessage);
+            var ticksRepeatableInterval = TickConverter.ticksRepeatableInterval(nextRunTicksForMessage);
 
             if (ticksRepeatableInterval.isPresent()) {
                 var subTask = getRunnableForMessage(message).runTaskTimer(plugin, nextRunTicksForMessage.get(0), ticksRepeatableInterval.get());
@@ -84,7 +83,7 @@ public class ScheduledMessageTaskScheduler extends BukkitRunnable
                 {
                     var subTask = getRunnableForMessage(message).runTaskLater(plugin, nextRunTick);
 
-                    var nextRunDateTime = tickConverter.ticksToDateTimeFromNow(nextRunTick);
+                    var nextRunDateTime = TickConverter.ticksToDateTimeFromNow(nextRunTick);
 
                     activeSubTasks.add(new ScheduledMessageTask(subTask, getAbsoluteTicks() + nextRunTick));
 
@@ -117,7 +116,7 @@ public class ScheduledMessageTaskScheduler extends BukkitRunnable
     }
 
     private boolean ticksAreSync() {
-        var areSync = tickConverter.ticksAreSync(
+        var areSync = TickConverter.ticksAreSync(
                 referencePoint.getTicks(), referencePoint.getDateTime(),
                 getAbsoluteTicks(), ZonedDateTime.now());
 

@@ -10,15 +10,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class TickConverter
+public final class TickConverter
 {
+    private TickConverter() {}
+
     private static final int ticksPerSecond = 20;
 
     public static int getTicksPerSecond() {
         return ticksPerSecond;
     }
 
-    public Optional<Long> ticksRepeatableInterval(List<Long> tickList) {
+    public static Optional<Long> ticksRepeatableInterval(List<Long> tickList) {
         long ticklistSize = tickList.size();
 
         if (ticklistSize <= 1) {
@@ -39,12 +41,12 @@ public class TickConverter
         return Optional.of(ticksBetween);
     }
 
-    public ZonedDateTime ticksToDateTimeFromNow(long ticks)
+    public static ZonedDateTime ticksToDateTimeFromNow(long ticks)
     {
         return ZonedDateTime.now().plus(Duration.of(ticks / ticksPerSecond, ChronoUnit.SECONDS));
     }
 
-    public boolean ticksAreSync(long firstAbsoluteTicks, ZonedDateTime firstDateTime, long secondAbsoluteTicks, ZonedDateTime secondDateTime) {
+    public static boolean ticksAreSync(long firstAbsoluteTicks, ZonedDateTime firstDateTime, long secondAbsoluteTicks, ZonedDateTime secondDateTime) {
         long expectedDifferenceTicks = durationToTicks(Duration.between(firstDateTime, secondDateTime));
         long actualDifferenceTicks = secondAbsoluteTicks - firstAbsoluteTicks;
 
@@ -55,7 +57,7 @@ public class TickConverter
         return (actualDifferenceTicks >= expectedFloor && actualDifferenceTicks <= expectedCeiling);
     }
 
-    public List<Long> getNextRunTicksUntil(Cron cronInterval, ZonedDateTime searchStartDate, ZonedDateTime searchEndDate)
+    public static List<Long> getNextRunTicksUntil(Cron cronInterval, ZonedDateTime searchStartDate, ZonedDateTime searchEndDate)
     {
         ZonedDateTime now = ZonedDateTime.now();
         List<Long> nextRunTicks = new ArrayList<>();
@@ -73,7 +75,7 @@ public class TickConverter
         return nextRunTicks;
     }
 
-    public long durationToTicks(Duration duration) {
+    public static long durationToTicks(Duration duration) {
         return (duration.toMillis() * ticksPerSecond) / 1000;
     }
 }
