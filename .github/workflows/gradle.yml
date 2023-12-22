@@ -61,7 +61,7 @@ jobs:
       - name: Generate jar with Gradle
         run: ./gradlew shadowJar
       - name: Upload generated artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: jar-files
           path: |
