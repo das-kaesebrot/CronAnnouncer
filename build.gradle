@@ -4,17 +4,21 @@ plugins {
     id 'com.palantir.git-version' version '4.2.0'
 }
 
-group 'eu.kaesebrot.dev'
+group = 'eu.kaesebrot.dev'
 version = gitVersion()
 
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_21
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 repositories {
     mavenCentral()
-    maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    maven {
+        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+    }
 }
 
 dependencies {
