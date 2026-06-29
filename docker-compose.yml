@@ -2,7 +2,7 @@ version: '2'
 
 services:
   mc-debug:
-    image: itzg/minecraft-server@sha256:982a6c9861c4a5c3a69bc0b591ca94c6b760abd01d0f0f941e97952d7cf9ec01
+    image: itzg/minecraft-server@sha256:e77d5de73b2906f7f8d96b5fb920e840fc925fffad2fccd95ee637b7daee5a5b
     container_name: mc-debug
     ports:
       - 25565:25565
