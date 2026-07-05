@@ -24,7 +24,7 @@ repositories {
 dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.20.1-experimental-SNAPSHOT'
     implementation 'com.cronutils:cron-utils:9.2.1'
-    testImplementation 'org.junit.jupiter:junit-jupiter:6.1.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:6.1.1'
     testImplementation 'org.mockito:mockito-core:5.23.0'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
